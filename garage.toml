@@ -1,0 +1,22 @@
+# Garage Configuration for Kollab v2.1
+# This file configures Garage for local development
+
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+rpc_bind_addr = "0.0.0.0:3901"
+rpc_public_addr = "garage:3901"
+rpc_secret = "7f690a4caee5ef2ed69c796fc011ef542f948eaddda3e79bcbd16cc50f929530"
+replication_factor = 1
+
+[s3_api]
+api_bind_addr = "0.0.0.0:3900"
+s3_region = "garage"
+root_domain = ".s3.garage"
+
+[s3_web]
+bind_addr = "0.0.0.0:3902"
+root_domain = ".web.garage"
+
+[admin]
+api_bind_addr = "0.0.0.0:3903"
+metrics_token = "changeme"

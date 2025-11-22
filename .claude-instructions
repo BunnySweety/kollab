@@ -1,0 +1,90 @@
+# Claude Instructions for Kollab Project
+
+## CRITICAL: Port Management Protocol
+
+### ALWAYS execute these steps when starting services:
+
+1. **CHECK PORT AVAILABILITY FIRST**
+   ```bash
+   netstat -ano | findstr :3000  # Frontend port
+   netstat -ano | findstr :4000  # API port
+   netstat -ano | findstr :3001  # WebSocket port
+   ```
+
+2. **KILL CONFLICTING PROCESSES IMMEDIATELY**
+   If any default port is occupied:
+   ```bash
+   taskkill //F //PID [PID_NUMBER]
+   ```
+
+3. **NEVER allow services to start on alternative ports**
+   - Frontend MUST run on port 3000
+   - API MUST run on port 4000
+   - WebSocket MUST run on port 3001
+
+## Service Management Rules
+
+### Before Starting Any Service:
+1. Kill all existing Node processes if there are port conflicts
+2. Verify ports are free
+3. Start services in correct order: API → Frontend
+
+### Port Conflict Resolution:
+```bash
+# Step 1: Find process using port
+netstat -ano | findstr :[PORT]
+
+# Step 2: Kill the process
+taskkill //F //PID [PID]
+
+# Step 3: Start service on correct port
+cd apps/web && pnpm dev  # Will use port 3000
+```
+
+## CORS Configuration
+
+Current CORS accepts:
+- `http://localhost:3000` (primary)
+- `http://localhost:3002` (development fallback)
+
+If frontend port changes, update `apps/api/src/index.ts`:
+```typescript
+cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:[NEW_PORT]',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
+  credentials: true,
+})
+```
+
+## Common Issues and Automatic Fixes
+
+| Issue | Automatic Action Required |
+|-------|--------------------------|
+| Port 3000 in use | Kill process and restart frontend |
+| Port 4000 in use | Kill process and restart API |
+| CORS error | Add frontend URL to CORS config |
+| Database table missing | Run `pnpm db:init` |
+
+## Project State Management
+
+When working on this project:
+1. Always check running processes first
+2. Kill duplicate services
+3. Ensure correct ports are used
+4. Update CORS if needed
+5. Verify database is initialized
+
+## DO NOT:
+- Let services run on non-standard ports
+- Ignore port conflicts
+- Start multiple instances of the same service
+- Skip port verification steps
+
+## ALWAYS:
+- Kill processes occupying default ports
+- Verify services are on correct ports
+- Update CORS when frontend port changes
+- Check for duplicate Node processes

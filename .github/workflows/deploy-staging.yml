@@ -1,0 +1,130 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:  # Manual trigger
+
+# Prevent concurrent deployments
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Deploy Staging Environment
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.kollab.com
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install API dependencies
+        run: |
+          cd apps/api
+          npm ci
+
+      - name: Install Web dependencies
+        run: |
+          cd apps/web
+          npm ci
+
+      - name: Build API
+        run: |
+          cd apps/api
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Build Web
+        run: |
+          cd apps/web
+          npm run build
+        env:
+          VITE_API_URL: ${{ secrets.STAGING_API_URL }}
+          NODE_ENV: production
+
+      - name: Run database migrations (Staging)
+        run: |
+          cd apps/api
+          npm run db:push
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+
+      # Deployment steps (customize based on your infrastructure)
+      - name: Deploy API to Staging
+        run: |
+          echo "🚀 Deploying API to staging..."
+          # Example deployment commands:
+          # - scp to server
+          # - docker build & push
+          # - kubectl apply
+          # - fly deploy
+          # - vercel deploy
+          echo "✅ API deployment script would run here"
+          echo "Configure your deployment method in this step"
+        env:
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+
+      - name: Deploy Web to Staging
+        run: |
+          echo "🚀 Deploying Web to staging..."
+          # Example deployment commands:
+          # - vercel --prod
+          # - netlify deploy --prod
+          # - aws s3 sync
+          # - firebase deploy
+          echo "✅ Web deployment script would run here"
+          echo "Configure your deployment method in this step"
+        env:
+          STAGING_WEB_KEY: ${{ secrets.STAGING_WEB_KEY }}
+
+      - name: Run smoke tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          sleep 5
+          curl -f https://staging.kollab.com/health || echo "Health check failed"
+        continue-on-error: true
+
+      - name: Notify deployment
+        if: always()
+        run: |
+          echo "## 🚀 Staging Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Environment: **Staging**" >> $GITHUB_STEP_SUMMARY
+          echo "- Branch: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 [Visit Staging](https://staging.kollab.com)" >> $GITHUB_STEP_SUMMARY
+
+      # Optional: Slack/Discord notification
+      # - name: Notify Slack
+      #   if: always()
+      #   uses: slackapi/slack-github-action@v1
+      #   with:
+      #     payload: |
+      #       {
+      #         "text": "Staging deployment ${{ job.status }}",
+      #         "blocks": [
+      #           {
+      #             "type": "section",
+      #             "text": {
+      #               "type": "mrkdwn",
+      #               "text": "🚀 *Staging Deployment*\nStatus: ${{ job.status }}\nBranch: `${{ github.ref_name }}`"
+      #             }
+      #           }
+      #         ]
+      #       }
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+

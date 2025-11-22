@@ -1,0 +1,127 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: kollab-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kollab
+      POSTGRES_PASSWORD: kollab_dev_password
+      POSTGRES_DB: kollab_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kollab"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: kollab-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # MeiliSearch (optional - search engine)
+  meilisearch:
+    image: getmeili/meilisearch:v1.5
+    container_name: kollab-meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: kollab_dev_master_key
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7700/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # pgAdmin (PostgreSQL GUI - optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: kollab-pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@kollab.app
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+  # RedisInsight (Redis GUI - optional)
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: kollab-redisinsight
+    restart: unless-stopped
+    ports:
+      - "8081:8001"
+    volumes:
+      - redisinsight_data:/data
+    depends_on:
+      - redis
+
+  # Garage (S3-compatible storage)
+  garage:
+    image: dxflrs/garage:${GARAGE_VERSION:-v2.1.0}
+    container_name: kollab-garage
+    restart: unless-stopped
+    ports:
+      - "3900:3900"  # S3 API
+      - "3901:3901"  # RPC
+      - "3903:3903"  # Admin API
+    volumes:
+      - garage_data:/var/lib/garage/meta
+      - garage_data_storage:/var/lib/garage/data
+      - ./garage.toml:/etc/garage.toml:ro
+    environment:
+      - GARAGE_CONFIG=/etc/garage.toml
+    command: ["/garage", "server"]
+    healthcheck:
+      # Check que l'API S3 répond - plus fiable et compatible Alpine
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3900/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  meilisearch_data:
+    driver: local
+  garage_data:
+    driver: local
+  garage_data_storage:
+    driver: local
+  pgadmin_data:
+    driver: local
+  redisinsight_data:
+    driver: local
+
+networks:
+  default:
+    name: kollab-network

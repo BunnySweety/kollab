@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.svelte-kit/
+.next/
+.turbo/
+out/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Cursor IDE (contient des tokens sensibles)
+.cursor/mcp.json
+**/.cursor/mcp.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Database
+*.sqlite
+*.sqlite3
+drizzle/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+.initialized
+dev.log
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Docker volumes (local development)
+postgres-data/
+redis-data/
+minio-data/
+meilisearch-data/

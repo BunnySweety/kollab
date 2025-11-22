@@ -1,0 +1,605 @@
+# Règles Claude pour Cursor - Projet Kollab
+
+## STRICT RULES - DOCUMENTATION
+
+### ABSOLUTE PROHIBITIONS
+
+**NE JAMAIS créer de nouveaux fichiers markdown** sauf si explicitement demandé par l'utilisateur.
+
+**Fichiers INTERDITS** (ne jamais créer) :
+- `SESSION_*.md` - Aucun rapport de session
+- `AUDIT_*.md` - Aucun rapport d'audit intermédiaire
+- `REFACTORING_*.md` - Aucun rapport de refactoring
+- `*_COMPLETE.md` - Aucun rapport de complétion
+- `*_IMPLEMENTED.md` - Aucun rapport d'implémentation
+- `*_PROGRESS.md` - Aucun rapport de progression
+- `*_SUMMARY.md` - Aucun rapport de résumé
+- `*_FINAL.md` - Aucun rapport final
+- `STATUS_*.md` - Aucun rapport de statut
+- `MIGRATION_*.md` - Aucun rapport de migration
+- Tout autre fichier markdown de rapport/documentation
+
+**Exception** : Seule la mise à jour des 10 fichiers essentiels est autorisée :
+1. `README.md`
+2. `QUICK_START.md`
+3. `DEPLOYMENT_GUIDE.md`
+4. `PRODUCTION_CHECKLIST.md`
+5. `CONTRIBUTING.md`
+6. `CHANGELOG.md`
+7. `TECHNICAL_GUIDE.md`
+8. `PERFECTION_10_COMPLETE.md`
+9. `AUDIT_SCORE_REEL.md`
+10. `START_HERE.md`
+
+### Bonnes Pratiques
+
+Au lieu de créer des fichiers de rapport :
+- Utiliser les TODOs (todo_write) pour suivre la progression
+- Répondre directement à l'utilisateur avec les résultats
+- Mettre à jour le `CHANGELOG.md` pour les changements importants
+- Mettre à jour `PERFECTION_10_COMPLETE.md` pour les accomplissements
+
+### Interdiction des Emojis
+
+**JAMAIS utiliser d'emojis** dans le code ou la documentation :
+- Pas d'emojis dans les commits messages
+- Pas d'emojis dans les commentaires de code
+- Pas d'emojis dans la documentation markdown
+- Pas d'emojis dans les noms de fichiers
+- Maintenir un ton professionnel en toutes circonstances
+
+---
+
+## CODE RULES
+
+### TypeScript / JavaScript
+
+1. **Strict Types**
+   - NEVER use `any`
+   - Use `unknown` for generic values
+   - Create strict interfaces/types
+   - Use Drizzle inferred types (`typeof table.$inferSelect`)
+
+2. **Logging**
+   - NEVER use `console.log`, `console.error`, `console.warn`
+   - Use structured logger: `log.info()`, `log.error()`, `log.warn()`, `log.debug()`
+   - Include context: `log.error('Error message', error, { userId, action })`
+
+3. **Gestion d'Erreurs**
+   - Toujours typer les erreurs : `error as Error`
+   - Logger avec contexte approprié
+   - Retourner des messages d'erreur clairs
+
+4. **Async/Await**
+   - Préférer `async/await` à `.then()`
+   - Gérer les erreurs avec `try/catch`
+   - Éviter les promesses non attendues
+
+### Code Quality
+
+1. **DRY (Don't Repeat Yourself)**
+   - Extract duplicated code into helpers
+   - Create reusable functions
+   - Centralize common logic
+
+2. **Separation of Concerns**
+   - Routes: Validation and orchestration only
+   - Services: Business logic
+   - Helpers: Reusable utility functions
+   - Middleware: Cross-cutting concerns
+
+3. **Naming Conventions**
+   - Variables/functions: `camelCase`
+   - Types/Interfaces: `PascalCase`
+   - Constants: `UPPER_SNAKE_CASE`
+   - Files: `kebab-case.ts`
+
+---
+
+## PERFORMANCE
+
+1. **Caching**
+   - Use Redis for frequently accessed data
+   - Define appropriate TTLs
+   - Invalidate cache on modifications
+   - Helper functions: `cacheGet`, `cacheSet`, `cacheDel`
+
+2. **Database**
+   - Use `.select()` to limit columns
+   - Add indexes for frequent queries
+   - Use `.limit()` for lists
+   - Avoid N+1 queries
+
+3. **Rate Limiting**
+   - Use Redis for rate limiting (multi-instance)
+   - Define appropriate limits per endpoint
+   - Return `X-RateLimit-*` headers
+
+---
+
+## SECURITY
+
+1. **Validation**
+   - Use Zod to validate all inputs
+   - Whitelist allowed fields (no mass assignment)
+   - Validate types, formats, and limits
+
+2. **Authorization**
+   - Verify authentication with `requireAuth`
+   - Verify workspace permissions with `checkWorkspaceMembership`
+   - Specify required roles: `['owner', 'admin']`
+
+3. **Sanitization**
+   - Escape HTML in exports
+   - Validate URLs (prevent SSRF)
+   - Sanitize user inputs
+
+4. **CSRF**
+   - Middleware `ensureCsrfToken` and `requireCsrfValidation` already in place
+   - Don't bypass CSRF except specific routes (login/register)
+
+---
+
+## TESTS
+
+1. **Structure**
+   - Organize by functionality: `auth.test.ts`, `export.test.ts`
+   - Use `describe` and `it` for structure
+   - Setup/teardown in `beforeEach`/`afterEach`
+
+2. **Coverage**
+   - Target 70%+ coverage
+   - Test error cases and edge cases
+   - Mock external dependencies (Redis, DB)
+
+3. **Best Practices**
+   - Isolated and independent tests
+   - Descriptive names: `should return 403 when user not member`
+   - Clear assertions with messages
+
+---
+
+## PROJECT STRUCTURE
+
+```
+apps/
+├── api/
+│   ├── src/
+│   │   ├── routes/         # API endpoints (validation + orchestration)
+│   │   ├── services/       # Business logic
+│   │   ├── lib/            # Helpers & utilities
+│   │   │   ├── auth.ts
+│   │   │   ├── cache.ts
+│   │   │   ├── logger.ts
+│   │   │   ├── redis.ts
+│   │   │   └── workspace-helpers.ts
+│   │   ├── middleware/     # Middleware functions
+│   │   ├── types/          # Type definitions
+│   │   ├── db/             # Database schema & migrations
+│   │   └── tests/          # Unit tests
+│   └── package.json
+└── web/
+    ├── src/
+    │   ├── routes/         # SvelteKit pages
+    │   ├── lib/            # Components & utilities
+    │   │   ├── api-client.ts  # Centralized API calls
+    │   │   └── components/
+    │   └── stores/         # State management
+    └── package.json
+```
+
+---
+
+## WORKFLOW
+
+1. **Before Coding**
+   - Create TODOs for complex tasks (3+ steps)
+   - Plan the approach
+   - DO NOT create markdown planning files
+
+2. **During Coding**
+   - Update TODOs with `todo_write`
+   - Commit regularly with clear messages
+   - DO NOT create progress files
+
+3. **After Coding**
+   - Mark TODOs as `completed`
+   - Update `CHANGELOG.md` if important change
+   - Respond to user with summary
+   - DO NOT create report files
+
+4. **Tests**
+   - Run tests: `npm run test`
+   - Check coverage: `npm run test:coverage`
+   - Fix lints: `npm run lint -- --fix`
+
+---
+
+## BEST PRACTICES
+
+### Imports
+```typescript
+// Ordre des imports
+import { external } from 'package';        // 1. Packages externes
+import { internal } from '../lib/helper';  // 2. Imports internes
+import type { Type } from '../types';      // 3. Types
+```
+
+### Error Handling
+```typescript
+// BAD
+catch (error) {
+  console.error(error);
+}
+
+// GOOD
+catch (error) {
+  log.error('Failed to process', error as Error, { 
+    userId, 
+    action: 'processData' 
+  });
+  return c.json({ error: 'Processing failed' }, 500);
+}
+```
+
+### Cache Pattern
+```typescript
+// Recommended pattern
+const cacheKey = `${CACHE_KEYS.RESOURCE}${resourceId}`;
+const cached = await cacheGet<Resource>(cacheKey);
+
+if (cached) {
+  return cached;
+}
+
+const data = await fetchFromDB();
+await cacheSet(cacheKey, data, CACHE_TTL.RESOURCE);
+return data;
+```
+
+### Validation
+```typescript
+// Use Zod
+import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator';
+
+const schema = z.object({
+  title: z.string().min(1).max(255),
+  content: z.unknown().optional()
+});
+
+router.post('/', requireAuth, zValidator('json', schema), async (c) => {
+  const validated = c.req.valid('json');
+  // ...
+});
+```
+
+---
+
+## PRIORITIES
+
+1. **Security** - Always first
+2. **Performance** - Optimize critical paths
+3. **Maintainability** - Clean and readable code
+4. **Tests** - Minimum 70% coverage
+5. **Documentation** - Only 10 essential files
+
+---
+
+## CRITICAL REMINDERS
+
+1. **NEVER create new markdown files** without explicit request
+2. **NEVER use `any`** - Use `unknown` or strict types
+3. **NEVER use `console.log`** - Use structured logger
+4. **ALWAYS** verify workspace permissions
+5. **ALWAYS** validate user inputs with Zod
+6. **ALWAYS** use Redis for cache and rate limiting
+7. **ALWAYS** log with appropriate context
+8. **NEVER use emojis** in code or documentation
+9. **ALWAYS use browser** for testing UI, debugging frontend, and validating user workflows
+10. **ALWAYS** use Conventional Commits format for commit messages
+11. **ALWAYS** validate environment variables at startup
+12. **ALWAYS** test database migrations before committing
+13. **ALWAYS** import Yjs singleton first in index.ts
+14. **ALWAYS** use consistent API response format
+
+---
+
+## GIT & VERSION CONTROL
+
+### Commit Messages
+
+**TOUJOURS utiliser Conventional Commits** :
+
+Format : `<type>(<scope>): <description>`
+
+Types :
+- `feat`: Nouvelle fonctionnalité
+- `fix`: Correction de bug
+- `docs`: Documentation
+- `style`: Formatage (pas de changement fonctionnel)
+- `refactor`: Refactoring (pas de changement fonctionnel)
+- `perf`: Amélioration de performance
+- `test`: Ajout/modification de tests
+- `chore`: Maintenance (dépendances, config)
+- `ci`: CI/CD
+
+Scopes (optionnels) :
+- `api`: Backend API
+- `web`: Frontend
+- `db`: Base de données
+- `auth`: Authentification
+- `cache`: Cache Redis
+
+Exemples :
+```bash
+feat(auth): add password reset functionality
+fix(api): prevent race condition in workspace creation
+refactor(cache): improve Redis connection handling
+```
+
+### Commit Best Practices
+
+- Utiliser le présent ("add feature" pas "added feature")
+- Première ligne < 72 caractères
+- Référencer les issues si applicable (`fix #123`)
+- Commits atomiques (un changement logique par commit)
+- NE JAMAIS committer du code cassé
+- NE JAMAIS committer du code commenté
+- NE JAMAIS committer des `console.log` de debug
+
+### Pre-Commit Checklist
+
+Avant chaque commit, vérifier :
+- [ ] Tests passent (`npm run test`)
+- [ ] Linter passe (`npm run lint`)
+- [ ] Type check passe (`npm run type-check`)
+- [ ] Build réussit (`npm run build`)
+- [ ] Pas de `console.log` restants
+- [ ] Pas de `any` dans le code
+- [ ] Messages d'erreur clairs et contextuels
+
+---
+
+## DATABASE MIGRATIONS
+
+### Création de Migrations
+
+1. **Modifier le schéma** dans `apps/api/src/db/schema.ts`
+2. **Générer la migration** : `npm run db:generate`
+3. **Vérifier le fichier SQL** généré dans `apps/api/drizzle/`
+4. **Tester la migration** : `npm run db:migrate`
+5. **Vérifier la base** : `npm run db:verify`
+
+### Bonnes Pratiques Migrations
+
+- Toujours tester les migrations en local avant commit
+- Les migrations doivent être réversibles (down migrations)
+- Ne jamais modifier une migration déjà commitée
+- Créer une nouvelle migration pour les changements
+- Vérifier les index et contraintes après migration
+- Documenter les migrations complexes dans le code SQL
+
+### Commandes Database
+
+```bash
+npm run db:generate    # Génère les migrations depuis le schéma
+npm run db:push        # Push le schéma directement (dev uniquement)
+npm run db:migrate     # Applique les migrations
+npm run db:studio      # Ouvre Drizzle Studio
+npm run db:verify      # Vérifie l'état de la base
+```
+
+---
+
+## ENVIRONMENT VARIABLES
+
+### Gestion des Variables
+
+- Toujours définir les variables dans `.env.example`
+- Documenter les variables dans `ENV_VARIABLES.md`
+- Ne jamais committer `.env` (déjà dans `.gitignore`)
+- Valider les variables requises au démarrage
+- Utiliser des valeurs par défaut uniquement pour le développement local
+
+### Pattern de Validation
+
+```typescript
+// BAD - Pas de validation
+const dbUrl = process.env.DATABASE_URL;
+
+// GOOD - Validation explicite
+const dbUrl = process.env.DATABASE_URL;
+if (!dbUrl) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
+```
+
+---
+
+## API DESIGN
+
+### Response Format
+
+Toujours utiliser un format cohérent :
+
+```typescript
+// Success Response
+{
+  success: true,
+  data: { ... }
+}
+
+// Error Response
+{
+  success: false,
+  error: "Error message",
+  code?: "ERROR_CODE"
+}
+
+// Paginated Response
+{
+  success: true,
+  data: [...],
+  pagination: {
+    page: 1,
+    limit: 20,
+    total: 100,
+    totalPages: 5
+  }
+}
+```
+
+### HTTP Status Codes
+
+- `200`: Succès (GET, PUT, PATCH)
+- `201`: Créé (POST)
+- `204`: Succès sans contenu (DELETE)
+- `400`: Requête invalide
+- `401`: Non authentifié
+- `403`: Non autorisé
+- `404`: Non trouvé
+- `409`: Conflit (ex: ressource existe déjà)
+- `422`: Validation échouée
+- `500`: Erreur serveur
+
+### Endpoint Naming
+
+- Utiliser des noms de ressources au pluriel : `/api/workspaces`, `/api/tasks`
+- Nested resources : `/api/workspaces/:id/tasks`
+- Actions spéciales : `/api/tasks/:id/archive` (POST)
+- Éviter les verbes dans les URLs : `/api/getTasks` (BAD) vs `/api/tasks` (GOOD)
+
+---
+
+## WEBSOCKET & REAL-TIME
+
+### Yjs Singleton Pattern
+
+**CRITIQUE** : Toujours importer le singleton Yjs en premier :
+
+```typescript
+// DO THIS FIRST in index.ts
+import './lib/yjs-singleton';
+
+// Then import other modules
+import { createWebSocketServer } from './websocket';
+```
+
+### WebSocket Best Practices
+
+- Gérer les déconnexions proprement
+- Valider les messages entrants
+- Limiter le taux de messages par client
+- Logger les erreurs WebSocket avec contexte
+- Nettoyer les ressources à la déconnexion
+
+---
+
+## CODE COMMENTS
+
+### Quand Commenter
+
+- Logique métier complexe
+- Workarounds temporaires (avec TODO pour fix futur)
+- Décisions architecturales importantes
+- Code non-intuitif qui ne peut pas être simplifié
+
+### Format des Commentaires
+
+```typescript
+// BAD - État l'évident
+const total = 0; // Initialize total to zero
+
+// GOOD - Explique le pourquoi
+// Cache invalidation nécessaire car les membres peuvent changer
+// sans notification explicite
+await cacheDel(cacheKey);
+
+// GOOD - Documente les paramètres complexes
+/**
+ * Vérifie l'accès utilisateur au workspace avec cache
+ * 
+ * @param workspaceId - ID du workspace
+ * @param userId - ID de l'utilisateur
+ * @param requiredRoles - Rôles requis (optionnel)
+ * @returns Membership ou null si non membre
+ */
+```
+
+---
+
+## DEPENDENCIES MANAGEMENT
+
+### Ajout de Dépendances
+
+1. Vérifier si une dépendance similaire existe déjà
+2. Préférer les packages maintenus activement
+3. Vérifier la taille du bundle (frontend)
+4. Lire la documentation avant d'ajouter
+5. Ajouter les types TypeScript si disponibles (`@types/package`)
+
+### Mise à Jour
+
+- Mettre à jour régulièrement pour les correctifs de sécurité
+- Tester après mise à jour majeure
+- Vérifier les breaking changes dans le changelog
+- Utiliser `npm outdated` pour identifier les mises à jour
+
+---
+
+## BROWSER AUTOMATION
+
+### Utilisation du Browser MCP
+
+**TOUJOURS utiliser le browser** pour les tâches nécessitant une interaction avec le web :
+
+1. **Navigation et Test**
+   - Tester l'application web en local ou staging
+   - Vérifier le rendu des pages et composants
+   - Valider les fonctionnalités utilisateur
+   - Capturer des screenshots pour documentation
+
+2. **Debugging**
+   - Inspecter les erreurs dans la console du browser
+   - Analyser les requêtes réseau
+   - Vérifier les états de l'application
+   - Tester les interactions utilisateur
+
+3. **Documentation**
+   - Capturer des screenshots de fonctionnalités
+   - Documenter les workflows utilisateur
+   - Vérifier le comportement visuel
+
+### Workflow Recommandé
+
+1. **Navigation** : Utiliser `browser_navigate` pour accéder à l'URL
+2. **Snapshot** : Utiliser `browser_snapshot` pour obtenir l'état de la page
+3. **Interaction** : Utiliser `browser_click`, `browser_type`, `browser_select_option` selon les besoins
+4. **Vérification** : Utiliser `browser_console_messages` et `browser_network_requests` pour le debugging
+5. **Capture** : Utiliser `browser_take_screenshot` si nécessaire pour documentation
+
+### Cas d'Usage Prioritaires
+
+- **Avant de créer/modifier des composants UI** : Tester le comportement actuel
+- **Après des changements de routes** : Vérifier la navigation fonctionne
+- **Pour valider des intégrations** : Tester les appels API depuis le frontend
+- **Pour documenter** : Capturer des screenshots de nouvelles fonctionnalités
+
+---
+
+## RESOURCES
+
+- **Logger** : `apps/api/src/lib/logger.ts`
+- **Cache** : `apps/api/src/lib/cache.ts`
+- **Workspace Helpers** : `apps/api/src/lib/workspace-helpers.ts`
+- **Types** : `apps/api/src/types/`
+- **Tests** : `apps/api/src/tests/`
+
+---
+
+**Version**: 2.1.0  
+**Project Score**: 10.0/10  
+**Last Update**: November 13, 2025  
+**Professional**: No emojis, suitable for enterprise environments
+
