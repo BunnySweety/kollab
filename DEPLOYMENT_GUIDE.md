@@ -98,7 +98,7 @@ openssl rand -hex 32
 
 ```bash
 # 1. Cloner le repo
-git clone https://github.com/votre-org/kollab.git
+git clone https://github.com/BunnySweety/kollab.git
 cd kollab
 
 # 2. Configurer les variables

@@ -165,7 +165,7 @@
 				<div class="flex space-x-6 text-sm text-muted-foreground">
 					<a href="/privacy" class="hover:text-foreground">Privacy</a>
 					<a href="/terms" class="hover:text-foreground">Terms</a>
-					<a href="https://github.com/kollab-io/kollab" class="hover:text-foreground">GitHub</a>
+					<a href="https://github.com/BunnySweety/kollab" class="hover:text-foreground">GitHub</a>
 					<a href="/docs" class="hover:text-foreground">Documentation</a>
 				</div>
 			</div>
