@@ -307,6 +307,13 @@ router.post('/', requireAuth, zValidator('json', schema), async (c) => {
 
 ## GIT & VERSION CONTROL
 
+### Repository GitHub
+
+- **URL** : https://github.com/BunnySweety/kollab
+- **Branche principale** : `main`
+- **Branche de développement** : `develop` (si utilisée)
+- Toujours vérifier que les URLs GitHub dans le code pointent vers `BunnySweety/kollab`
+
 ### Commit Messages
 
 **TOUJOURS utiliser Conventional Commits** :
@@ -347,6 +354,7 @@ refactor(cache): improve Redis connection handling
 - NE JAMAIS committer du code cassé
 - NE JAMAIS committer du code commenté
 - NE JAMAIS committer des `console.log` de debug
+- NE JAMAIS committer de tokens ou secrets (vérifier `.gitignore`)
 
 ### Pre-Commit Checklist
 
@@ -358,6 +366,8 @@ Avant chaque commit, vérifier :
 - [ ] Pas de `console.log` restants
 - [ ] Pas de `any` dans le code
 - [ ] Messages d'erreur clairs et contextuels
+- [ ] Pas de tokens/secrets dans le code
+- [ ] URLs GitHub correctes (BunnySweety/kollab)
 
 ---
 
@@ -588,6 +598,29 @@ await cacheDel(cacheKey);
 
 ---
 
+## GITHUB MCP INTEGRATION
+
+### Utilisation de GitHub MCP
+
+Le projet est configuré avec GitHub MCP pour accéder aux ressources GitHub directement depuis Cursor.
+
+**Ressources disponibles** :
+- Créer/gérer des dépôts GitHub
+- Accéder aux issues et pull requests
+- Lire les fichiers du dépôt
+- Créer des branches et commits
+- Gérer les workflows GitHub Actions
+
+**Utilisation** :
+- Utiliser les outils MCP GitHub pour interagir avec le dépôt
+- Créer des issues GitHub pour tracker les bugs/features
+- Utiliser les pull requests pour les changements importants
+- Vérifier les workflows CI/CD sur GitHub
+
+**Documentation** : Voir `MCP_GITHUB_SETUP.md` pour la configuration complète
+
+---
+
 ## RESOURCES
 
 - **Logger** : `apps/api/src/lib/logger.ts`
@@ -595,11 +628,14 @@ await cacheDel(cacheKey);
 - **Workspace Helpers** : `apps/api/src/lib/workspace-helpers.ts`
 - **Types** : `apps/api/src/types/`
 - **Tests** : `apps/api/src/tests/`
+- **GitHub Repository** : https://github.com/BunnySweety/kollab
+- **GitHub MCP Setup** : `MCP_GITHUB_SETUP.md`
 
 ---
 
-**Version**: 2.1.0  
+**Version**: 2.2.0  
 **Project Score**: 10.0/10  
-**Last Update**: November 13, 2025  
+**Last Update**: November 22, 2025  
+**GitHub Repository**: https://github.com/BunnySweety/kollab  
 **Professional**: No emojis, suitable for enterprise environments
 
