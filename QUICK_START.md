@@ -11,7 +11,7 @@
 
 ```bash
 # Cloner le repo
-git clone https://github.com/your-org/kollab.git
+git clone https://github.com/BunnySweety/kollab.git
 cd kollab
 
 # Installer les dépendances
