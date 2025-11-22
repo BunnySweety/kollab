@@ -116,9 +116,9 @@ Configure les environnements pour protection et approbations:
 Ajoutez ces badges dans votre README.md principal:
 
 ```markdown
-![CI Pipeline](https://github.com/your-org/kollab/actions/workflows/ci.yml/badge.svg)
-![Deploy Staging](https://github.com/your-org/kollab/actions/workflows/deploy-staging.yml/badge.svg)
-![Deploy Production](https://github.com/your-org/kollab/actions/workflows/deploy-production.yml/badge.svg)
+![CI Pipeline](https://github.com/BunnySweety/kollab/actions/workflows/ci.yml/badge.svg)
+![Deploy Staging](https://github.com/BunnySweety/kollab/actions/workflows/deploy-staging.yml/badge.svg)
+![Deploy Production](https://github.com/BunnySweety/kollab/actions/workflows/deploy-production.yml/badge.svg)
 ```
 
 ---

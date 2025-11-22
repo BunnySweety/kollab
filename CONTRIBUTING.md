@@ -107,11 +107,11 @@ Feature suggestions are tracked as GitHub issues.
 
 ```bash
 # 1. Fork and clone the repository
-git clone https://github.com/YOUR_USERNAME/kollab.git
+git clone https://github.com/BunnySweety/kollab.git
 cd kollab
 
 # 2. Add upstream remote
-git remote add upstream https://github.com/your-org/kollab.git
+git remote add upstream https://github.com/BunnySweety/kollab.git
 
 # 3. Install dependencies
 npm run install:all
@@ -724,8 +724,8 @@ Looking for something to work on? Check issues labeled:
 ## 📞 Getting Help
 
 - **Documentation**: Read the [docs](./docs)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/kollab/discussions)
-- **Issues**: [GitHub Issues](https://github.com/your-org/kollab/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/BunnySweety/kollab/discussions)
+- **Issues**: [GitHub Issues](https://github.com/BunnySweety/kollab/issues)
 - **Discord**: [Join our Discord](https://discord.gg/kollab)
 
 ---

@@ -2,8 +2,8 @@
 
 > A high-performance, real-time collaboration platform built with modern web technologies
 
-[![CI Pipeline](https://github.com/your-org/kollab/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/kollab/actions/workflows/ci.yml)
-[![Deploy Staging](https://github.com/your-org/kollab/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/your-org/kollab/actions/workflows/deploy-staging.yml)
+[![CI Pipeline](https://github.com/BunnySweety/kollab/actions/workflows/ci.yml/badge.svg)](https://github.com/BunnySweety/kollab/actions/workflows/ci.yml)
+[![Deploy Staging](https://github.com/BunnySweety/kollab/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/BunnySweety/kollab/actions/workflows/deploy-staging.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -97,7 +97,7 @@ Get started in **5 minutes**! See [QUICK_START.md](QUICK_START.md) for detailed 
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/kollab.git
+git clone https://github.com/BunnySweety/kollab.git
 cd kollab
 
 # 2. Install dependencies
@@ -368,7 +368,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 1. **Fork & Clone**
    ```bash
-   git clone https://github.com/your-username/kollab.git
+   git clone https://github.com/BunnySweety/kollab.git
    cd kollab
    ```
 
@@ -422,8 +422,8 @@ Built with amazing open-source technologies:
 ## Support
 
 - **Documentation**: See [/docs](./docs) folder
-- **Issues**: [GitHub Issues](https://github.com/your-org/kollab/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/kollab/discussions)
+- **Issues**: [GitHub Issues](https://github.com/BunnySweety/kollab/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/BunnySweety/kollab/discussions)
 - **Email**: support@kollab.com
 
 ---
@@ -465,6 +465,6 @@ Built with amazing open-source technologies:
 
 Made with care by the Kollab Team
 
-[Website](https://kollab.com) • [Documentation](./docs) • [GitHub](https://github.com/your-org/kollab)
+[Website](https://kollab.com) • [Documentation](./docs) • [GitHub](https://github.com/BunnySweety/kollab)
 
 </div>
